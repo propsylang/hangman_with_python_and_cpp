@@ -1,10 +1,11 @@
 apple
-orange
 banana
 cherry
 durian
 grape
 mango
-papaya
-raisin
 melon
+orange
+papaya
+peach
+raisin
