@@ -3,7 +3,7 @@
 ## <span style="color: lightgreen; ">ハングマンとは</span>
 
 ハングマンは、相手の考えた単語を当てる2人用のゲームである。(wikipedia)  
-詳しいルールは以下参照
+詳しいルールは下記参照
 
 ## <span style="color: lightgreen; ">今回作るハングマンのルール</span>
 1. 出題者（プログラム側）は出題する単語を選び、その単語の文字数を表す下線を引く。絞首台を描く。 
@@ -24,6 +24,8 @@
     - 単語であれば合っているか判定
         - 合っていればゲーム終了(プレイヤーの勝利)
         - 間違っていればゲーム続行、残りの予想可能回数を１減らす
+
+- 絞首台、文字盤を表示、更新
 
 - 予想可能回数が無くなれば出題者の勝利
 
@@ -56,6 +58,14 @@ while クリアされてなくて試行回数が１以上:
  ```
 
 ## <span style="color: lightgreen; ">実装の前準備</span>
+実際のゲームを作る前準備として、関数を用意しておこう  
+関数  
+- **display_hangman**: 絞首台を表示
+- **display_wordlist**: 文字盤を表示
+- **choose_word**: 単語を無作為に選ぶ
+- **play**: 実際にゲームを進行する
+- **main**: play関数を実行する
+
 ```Python
 def display_hangman():
     pass
@@ -75,6 +85,9 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+※passと書かれている関数は、なにも実行しない。実際の処理を書くまでは関数だけ用意しておき、passと書いておく。  
+※最後の`if __name__ == "__main__":`はこのファイルが.pyとして実行されているかを判定するものだが、気にしなくて良い（今回に関しては書かなくても良い）。詳しいことが知りたければ[参照](https://note.nkmk.me/python-if-name-main/)  
+※関数を使わない、すべての処理を同じ関数に書き込む等でも同じ動きをするプログラムを書けるが、後々機能を追加しやすいように処理ごとに関数を分けて書く方が望ましい。
 
 ## <span style="color: lightgreen; ">実装①～入力を受け、正解かどうか判定～</span>  
 ユーザーの入力を受け付け、文字数の判定と正誤判定を行うコードを書いてみよう
@@ -90,7 +103,7 @@ if __name__ == "__main__":
 def play():
     cleared = False
     tries = 6
-    word_ans = choose_word()
+    word_ans = "default"
     while not cleared and tries > 0:
         inp = input("Type in letter or word:")
         tries -= 1
@@ -122,54 +135,106 @@ def play():
 
 
  ```Python
-def disp_wordlist(letters_guessed,word_ans):
+def display_wordlist(letters_guessed, word_ans):
     wordlist = ""
-    for c in word_ans:#正解の単語の各文字について
-        if c in letters_guessed:#すでに当てていたら
-            wordlist += (c + " ")#文字を表示
-        else:#まだ当てていなかったら
-            wordlist += "_ "#下線を表示
-    return wordlist
+    for c in word_ans:
+        if c in letters_guessed:
+            wordlist += (c + " ")
+        else:
+            wordlist += "_ "
+    print(wordlist)
  ```
-
-
-
- 
-
-
-```Python
-cleared = False
-tries = 6
-word_ans = "default"
-wordline = "_" * len(word_ans)
-letters_guessed = []
-while not cleared and tries > 0:
-    inp = input("Type in letter or word:")
-    tries -= 1
-    if len(inp) == 1:
-        if inp in word_ans:
-            print("hit!")
-            letters_guessed.append(inp)#当てた文字をリストに追加
-        else:
-            print("miss!")
-            
-    elif len(inp) == len(word_ans):
-        if inp == word_ans:
-            print("right word!")
-            cleared = True
-        else:
-            print("wrong word!")
-    else:
-        print("invalid input")
-```
-
 <details>
-<summary>折りたたみ部分のタイトル</summary>
+<summary>display_hangman</summary>
 <pre>
 <code>
-折りたたまれる詳細情報部分
-折りたたまれる詳細情報部分
-折りたたまれる詳細情報部分
+
+ ```Python
+def display_hangman(tries):
+    HANGMANPICS = ['''
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\\  |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ /    |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ / \\  |
+      |
+=========''']
+    print(HANGMANPICS[6-tries],end="    ")
+ ```
 </code>
 </pre>
 </details>
+  
+    
+
+
+```Python
+def play():
+    cleared = False
+    tries = 6
+    word_ans = "default"
+    letters_guessed = []
+    while not cleared and tries > 0:
+        display_hangman(tries) #絞首台を表示
+        display_wordlist(letters_guessed,word_ans) #文字盤を表示
+        inp = input("Type in letter or word:")
+        tries -= 1
+        if len(inp) == 1:
+            if inp in word_ans:
+                print("hit!")
+                letters_guessed.append(inp) #当てた文字をリストに追加
+            else:
+                print("miss!")
+
+        elif len(inp) == len(word_ans):
+            if inp == word_ans:
+                print("right word!")
+                cleared = True
+            else:
+                print("wrong word!")
+        else:
+            print("invalid input")
+            tries += 1
+```
