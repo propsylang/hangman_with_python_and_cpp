@@ -523,6 +523,7 @@ def play():
         if len(inp) == 1:
             if inp in word_ans:
                 print("hit!")
+                tries += 1
                 letters_guessed.append(inp)
             else:
                 print("miss!")

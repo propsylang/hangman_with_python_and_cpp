@@ -238,3 +238,5 @@ def play():
             print("invalid input")
             tries += 1
 ```
+## <span style="color: lightgreen; ">実装③～単語を無作為に選ぶ～</span>
+random.choice()関数を使って単語を無作為に選んで返す関数を作ってみよう  
